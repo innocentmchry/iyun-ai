@@ -230,7 +230,7 @@
     messageDiv.textContent = text;
     chat.appendChild(messageDiv); 
 
-    chat.scrollTop = chatContainer.scrollHeight;
+    chat.scrollTop = chat.scrollHeight;
   
     return isPlaceholder ? messageDiv : null;
   }
