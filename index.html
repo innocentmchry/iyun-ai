@@ -415,54 +415,48 @@
   }
 
   async function sendMessage() {
-    // const userInput = inputField.value.trim();
-    const userInput = input.value.trim(); // ✅ correct variable
-
-    if (!userInput) return;
-  
-    // Create user's message bubble
-    appendMessage(userInput, 'user');
-  
-    // Show placeholder for response
-    const placeholderId = appendMessage("Processing...", 'bot', true); // true means it's a placeholder
-  
-    // Send message to backend
-    try {
-
-      const response = await fetch("https://iyun-ai-backend.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userInput }),
-      });
-
-      const data = await response.json();
-      // console.log("Raw response data:", data);
-  
-      const reply = data.reply || "Sorry, no reply received.";
-      // updateMessage(placeholderId, reply);
-
+      const userInput = input.value.trim();
+      if (!userInput) return;
+    
+      const inputSelectedLang = document.getElementById('inputLang').value;
+      const outputSelectedLang = document.getElementById('outputLang').value;
+    
+      appendMessage(userInput, 'user');
+      const placeholderId = appendMessage("Processing...", 'bot', true);
+    
       try {
-      const translationResponse = await fetch("https://iyun-ai-translate.onrender.com/translate", {
+        const response = await fetch("https://iyun-ai-backend.onrender.com/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: reply, to: "brx" })  // change "brx" to desired language code
+          body: JSON.stringify({ message: userInput, inputLanguage: inputSelectedLang, outputLanguage:  outputSelectedLang}),
         });
-      
-        const translationData = await translationResponse.json();
-        const translatedText = translationData.translation || reply;
-      
-        updateMessage(placeholderId, translatedText);
-      } catch (translationError) {
-        console.error("Translation failed:", translationError);
-        updateMessage(placeholderId, reply); // fallback to original if translation fails
-      }
+    
+        const data = await response.json();
+        const reply = data.reply || "Sorry, no reply received.";
+    
+        // try {
+        //   const translationResponse = await fetch("https://iyun-ai-translate.onrender.com/translate", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({ text: reply, to: "brx" })  // You may update "brx" based on selectedLang too
+        //   });
+    
+        //   const translationData = await translationResponse.json();
+        //   const translatedText = translationData.translation || reply;
+        //   updateMessage(placeholderId, translatedText);
+        // } catch (translationError) {
+        //   console.error("Translation failed:", translationError);
+        //   updateMessage(placeholderId, reply);
+        // }
         
-    } catch (error) {
-      updateMessage(placeholderId, "Sorry, something went wrong.");
+        updateMessage(placeholderId, reply);
+    
+      } catch (error) {
+        updateMessage(placeholderId, "Sorry, something went wrong.");
+      }
+    
+      input.value = '';
     }
-  
-    input.value = '';
-  }
 
 </script>
 
@@ -528,6 +522,8 @@
     });
   </script>
   
+  
+  <!-- info sidebar -->
   <script>
   const menuToggle = document.getElementById('menuToggle');
   const menuSidebar = document.getElementById('menuSidebar');
@@ -563,8 +559,7 @@ document.addEventListener('click', function(event) {
   }
 });
 
-</script>
-
+    </script>
 
 
 </body>
