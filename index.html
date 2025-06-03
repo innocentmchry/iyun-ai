@@ -174,31 +174,25 @@
     font-size: 0.95rem;
     }
   }
-
   .message ol,
   .message ul {
-    padding-left: 1.5rem;
+    list-style-position: outside;   /* Fixes number wrapping issue */
+    padding-left: 1.5rem;           /* Creates space for bullets/numbers */
     margin: 0.5rem 0;
+  }
+  
+  .message ul {
+    list-style-type: disc;          /* Optional: make sure bullets are round dots */
   }
   
   .message li {
     margin-bottom: 0.3rem;
-    word-wrap: break-word;
-  }
-  
-  .message ol {
-    list-style-position: inside;
-  }
-  
-  .message ul {
-    list-style-type: disc;
-    list-style-position: inside;
+    word-wrap: break-word;          /* Ensure long text wraps correctly */
   }
   
   .message p {
-    margin: 0.3rem 0;
+    margin: 0.3rem 0;               /* Keep paragraph spacing clean */
   }
-
 
     
 
