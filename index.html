@@ -281,7 +281,24 @@
       // console.log("Raw response data:", data);
   
       const reply = data.reply || "Sorry, no reply received.";
-      updateMessage(placeholderId, reply);
+      // updateMessage(placeholderId, reply);
+
+      try {
+      const translationResponse = await fetch("https://iyun-ai-translate.onrender.com/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: reply, to: "brx" })  // change "brx" to desired language code
+        });
+      
+        const translationData = await translationResponse.json();
+        const translatedText = translationData.translation || reply;
+      
+        updateMessage(placeholderId, translatedText);
+      } catch (translationError) {
+        console.error("Translation failed:", translationError);
+        updateMessage(placeholderId, reply); // fallback to original if translation fails
+      }
+        
     } catch (error) {
       updateMessage(placeholderId, "Sorry, something went wrong.");
     }
