@@ -235,12 +235,20 @@
     return isPlaceholder ? messageDiv : null;
   }
 
+  // function updateMessage(messageElement, newText) {
+  //   if (messageElement && messageElement instanceof HTMLElement) {
+  //     messageElement.textContent = newText;
+  //     messageElement.classList.remove('placeholder');
+  //   }
+  // }
+
   function updateMessage(messageElement, newText) {
     if (messageElement && messageElement instanceof HTMLElement) {
-      messageElement.textContent = newText;
+      messageElement.innerHTML = marked.parse(newText); // Render markdown
       messageElement.classList.remove('placeholder');
     }
   }
+
 
 
 
@@ -292,7 +300,7 @@
       });
 
       const data = await response.json();
-      console.log("Raw response data:", data);
+      // console.log("Raw response data:", data);
   
       const reply = data.reply || "Sorry, no reply received.";
       updateMessage(placeholderId, reply);
