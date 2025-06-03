@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Iyun AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 
   <style>
     :root {
@@ -76,11 +78,35 @@
   z-index: 1;
 }
 
-.message.user {
-  align-self: flex-end;       /* Keeps the bubble on the right */
-  color: var(--user-msg-text);
-  text-align: right;          
+
+.message {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: 20px;
+  line-height: 1.4;
+  font-size: 1rem;
+  word-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* Bot message bubble (left-aligned) */
+.message.bot {
+  align-self: flex-start;
+  background-color: var(--bot-msg-bg);
+  color: var(--bot-msg-text);
+  border: 1px solid var(--bot-msg-border);
+  border-top-left-radius: 0;
+}
+
+/* User message bubble (right-aligned) */
+.message.user {
+  align-self: flex-end;
+  background-color: var(--user-msg-bg);
+  color: var(--user-msg-text);
+  text-align: right;
+  border-top-right-radius: 0;
+}
+
 
 
 .input-area {
@@ -169,19 +195,26 @@
     if (e.key === "Enter") sendMessage();
   });
 
+  
   function appendMessage(className, text) {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = `message ${className}`;
-    msgDiv.textContent = text;
-    chat.appendChild(msgDiv);
-    chat.scrollTop = chat.scrollHeight;
-  }
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${className}`;
+      if (className === "bot") {
+        msgDiv.innerHTML = marked.parse(text); // Parse markdown to HTML
+      } else {
+        msgDiv.textContent = text; // plain for user
+      }
+      chat.appendChild(msgDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
 
   async function sendMessage() {
     const userMessage = input.value.trim();
     if (!userMessage) return;
 
     appendMessage("user", userMessage);
+    
     input.value = "";
 
     try {
