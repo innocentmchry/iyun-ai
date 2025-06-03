@@ -228,8 +228,9 @@
     if (isPlaceholder) messageDiv.classList.add('placeholder');
   
     messageDiv.textContent = text;
-    chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    chat.appendChild(messageDiv); 
+
+    chat.scrollTop = chatContainer.scrollHeight;
   
     return isPlaceholder ? messageDiv : null;
   }
@@ -270,7 +271,9 @@
   // }
 
   async function sendMessage() {
-    const userInput = inputField.value.trim();
+    // const userInput = inputField.value.trim();
+    const userInput = input.value.trim(); // ✅ correct variable
+
     if (!userInput) return;
   
     // Create user's message bubble
