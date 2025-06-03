@@ -284,11 +284,13 @@
   
     // Send message to backend
     try {
-      const response = await fetch('/api/message', {
-        method: 'POST',
+
+      const response = await fetch("https://iyun-ai-backend.onrender.com/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userInput }),
-        headers: { 'Content-Type': 'application/json' }
       });
+
       const data = await response.json();
   
       // Replace placeholder with actual response
