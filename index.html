@@ -292,9 +292,10 @@
       });
 
       const data = await response.json();
+      console.log("Raw response data:", data);
   
-      // Replace placeholder with actual response
-      updateMessage(placeholderId, data.message);
+      const reply = data.reply || "Sorry, no reply received.";
+      updateMessage(placeholderId, reply);
     } catch (error) {
       updateMessage(placeholderId, "Sorry, something went wrong.");
     }
