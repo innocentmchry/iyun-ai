@@ -314,6 +314,12 @@
   font-size: 1.1rem;
 }
 
+#infoSidebar p {
+  text-align: justify;
+  text-align-last: center; /* Center last line */
+}
+
+
 
 
 
@@ -363,8 +369,10 @@
   <div id="infoSidebar">
     <h3>About  इयुन AI</h3>
     <p>
-      Iyun AI is designed to assist with multilingual conversations, providing translation and intelligent responses in both Bodo and English. The name "इयुन" or “Iyun” means “Future” in Bodo language, reflecting our vision for the cultural future of the Bodo language and its rich heritage. By leveraging advanced natural language processing, Iyun AI delivers accurate, context-aware answers. As part of our commitment to linguistic empowerment, data collected through Iyun AI will be used to train an independent, community-driven large language models or to fine-tune state-of-the-art models, ensuring that Bodo language and culture continue to thrive in the digital age.
-    </p>
+    Iyun AI is designed to assist with multilingual conversations, providing translation and intelligent responses in both Bodo and English. The name <strong>"इयुन" or “Iyun”</strong> means “Future” in the Bodo language, reflecting our vision for the cultural future of the Bodo language and its rich heritage. By leveraging advanced natural language processing, Iyun AI delivers accurate, context-aware answers. As part of our commitment to linguistic empowerment, data collected through Iyun AI will be used to train independent, community-driven large language models or to fine-tune state-of-the-art models, ensuring that Bodo language and culture continue to thrive in the digital age.
+    <br><br>
+    <em>Iyun AI may not generate correct responses all the time and is still in the development phase.</em>
+  </p>
   </div>
 </div>
 
@@ -373,6 +381,7 @@
 
   <!-- Particle Background -->
   <div id="particles-js"></div>
+  
 
   <header>
     <img src="ai-icon.png" alt="Iyun AI" class="ai-logo" />
@@ -565,6 +574,28 @@ document.addEventListener('click', function(event) {
 });
 
     </script>
+    
+    <script>
+  // Map language codes to placeholder text
+  const placeholders = {
+    en: "Ask anything in English...",
+    brx1: "Ask anything in Bodo Latin Script...",
+    brx2: "Ask anything in Bodo Devanagiri Script..."
+  };
+
+  // Get references to the select and input elements
+  const inputLang = document.getElementById('inputLang');
+  const userInput = document.getElementById('user-input');
+
+  // Update placeholder on language change
+  inputLang.addEventListener('change', function() {
+    const selectedLang = inputLang.value;
+    userInput.placeholder = placeholders[selectedLang] || "Ask anything...";
+  });
+
+  // Optional: Set initial placeholder based on default selected value
+  userInput.placeholder = placeholders[inputLang.value] || "Ask anything...";
+</script>
 
 
 </body>
