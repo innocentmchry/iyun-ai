@@ -1,50 +1,1051 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Under Maintenance</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iyun AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
   <style>
+    :root {
+      --bg-color: #fdfdfd;
+      --header-bg: #ffffff;
+      --header-text: #333333;
+      --border-color: #e6e6e6;
+      --user-msg-bg: #f5f5f5;
+      --user-msg-text: #1a1a1a;
+      --bot-msg-bg: #ffffff;
+      --bot-msg-text: #262626;
+      --bot-msg-border: #ebebeb;
+      --input-bg: #f9f9f9;
+      --input-border: #dddddd;
+      --input-text: #2c2c2c;
+      --button-bg: #d8f3dc;
+      --button-hover-bg: #b7e4c7;
+      --button-text: #1b4332;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
     body {
-      background: #f8fafc;
-      color: #22223b;
+      background-color: var(--bg-color);
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      z-index: 0;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      font-family: "Segoe UI", Arial, sans-serif;
+      gap: 10px;
+      z-index: 1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
     }
-    .container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-      padding: 2.5rem 2rem;
-      text-align: center;
-      max-width: 400px;
+
+.chat-container {
+  flex: 1;
+  padding: 5rem 1rem 4.5rem 1rem; /* Top padding adjusted for fixed header */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 1;
+}
+
+
+
+.message {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: 20px;
+  line-height: 1.4;
+  font-size: 1rem;
+  word-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Bot message bubble (left-aligned) */
+.message.bot {
+  align-self: flex-start;
+  background-color: var(--bot-msg-bg);
+  color: var(--bot-msg-text);
+  border: 1px solid var(--bot-msg-border);
+  border-top-left-radius: 0;
+}
+
+/* User message bubble (right-aligned) */
+.message.user {
+  align-self: flex-end;
+  background-color: var(--user-msg-bg);
+  color: var(--user-msg-text);
+  text-align: right;
+  border-top-right-radius: 0;
+}
+
+
+
+.input-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  border-top: 1px solid var(--border-color);
+  padding: 0.75rem;
+  background: var(--input-bg);
+  z-index: 2;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 20px;
+  outline: none;
+  color: var(--input-text);
+  background-color: var(--input-bg);
+}
+
+.input-area button {
+  margin-left: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.input-area button:hover {
+  background-color: var(--button-hover-bg);
+}
+    
+.message.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+
+@media (max-width: 600px) {
+  .input-area {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .input-area button {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .chat-container {
+    padding-bottom: 6.5rem; /* More space on small screens */
+  }
+
+  .message {
+    max-width: calc(100% - 1rem); /* Stretch message bubbles with side margin */
+    margin: 0.25rem 0.5rem;
+    font-size: 0.95rem;
     }
-    h1 {
-      color: #2563eb;
-      margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-    .icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #2563eb;
-    }
-  </style>
+  }
+  .message ol,
+  .message ul {
+    list-style-position: outside;   /* Fixes number wrapping issue */
+    padding-left: 1.5rem;           /* Creates space for bullets/numbers */
+    margin: 0.5rem 0;
+  }
   
+  .message ul {
+    list-style-type: disc;          /* Optional: make sure bullets are round dots */
+  }
+  
+  .message li {
+    margin-bottom: 0.3rem;
+    word-wrap: break-word;          /* Ensure long text wraps correctly */
+  }
+  
+  .message p {
+    margin: 0.3rem 0;               /* Keep paragraph spacing clean */
+  }
+  .ai-logo {
+    width: 35px;         /* Adjust size as needed */
+    height: 35px;
+    object-fit: contain;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+  
+  #floatingMenu {
+  position: fixed;
+  top: 10px; /* below your header */
+  left: 0;
+  z-index: 100;
+    }
+    
+    #menuToggle {
+      background: #d8f3dc;
+      color: #1b4332;
+      border: none;
+      border-radius: 0 20px 20px 0;
+      padding: 12px 18px;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 1px 2px 8px rgba(0,0,0,0.08);
+      transition: background 0.2s;
+    }
+    
+    #menuToggle:hover {
+      background: #b7e4c7;
+    }
+    
+    #menuSidebar {
+      width: 220px;
+      background: #fff;
+      border-right: 1px solid #e6e6e6;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.07);
+      padding: 20px 18px 18px 18px;
+      position: absolute;
+      top: 0;
+      left: -240px;
+      transition: left 0.3s cubic-bezier(.4,2,.6,1);
+      border-radius: 0 14px 14px 0;
+    }
+    
+    #menuSidebar.open {
+      left: 48px;
+    }
+    
+    #menuSidebar h3 {
+      margin-bottom: 16px;
+      color: #1b4332;
+      font-size: 1.1rem;
+    }
+    
+    #menuSidebar label {
+      display: block;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    
+    #menuSidebar select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #dddddd;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+      color: #2c2c2c;
+    }
+    
+    
+    #floatingInfo {
+  position: fixed;
+  top: 10px;
+  right: 0;
+  z-index: 100;
+}
+
+#infoToggle {
+  background: #f1f3f4;
+  color: #2563eb;
+  border: none;
+  border-radius: 20px 0 0 20px;
+  padding: 12px 18px;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: -1px 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+
+#infoToggle:hover {
+  background: #e0e7ef;
+}
+
+#infoSidebar {
+  width: 280px;
+  background: #fff;
+  border-left: 1px solid #e6e6e6;
+  box-shadow: -2px 0 12px rgba(0,0,0,0.07);
+  padding: 20px 18px 18px 18px;
+  position: absolute;
+  top: 0;
+  right: -300px;
+  transition: right 0.3s cubic-bezier(.4,2,.6,1);
+  border-radius: 14px 0 0 14px;
+}
+
+#infoSidebar.open {
+  right: 48px;
+}
+
+#infoSidebar h3 {
+  margin-bottom: 16px;
+  color: #2563eb;
+  font-size: 1.1rem;
+}
+
+#infoSidebar p {
+  text-align: justify;
+  text-align-last: center; /* Center last line */
+}
+
+.play-audio-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  padding-left: 8px;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  outline: none;
+  transition: filter 0.15s;
+}
+.play-audio-btn:hover,
+.play-audio-btn:focus {
+  filter: brightness(0.85);
+}
+.message.bot {
+  align-self: flex-start;
+  background-color: var(--bot-msg-bg);
+  color: var(--bot-msg-text);
+  border: 1px solid var(--bot-msg-border);
+  border-top-left-radius: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.bot-text {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+    
+
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="icon">🚧</div>
-    <h1>We'll be back soon!</h1>
-    <p>The Iyun AI app is currently under maintenance.</p>
-    <p>Please check back later.</p>
+    
+    <!-- Floating Menu Button and Sidebar -->
+    <div id="floatingMenu">
+      <button id="menuToggle">&#9776;</button>
+      <div id="menuSidebar">
+        <h3>Configurations</h3>
+        <label for="inputLang">Input Language:</label>
+        <select id="inputLang">
+          <option value="auto">Auto Detect</option>
+          <option value="en">English</option>
+          <option value="brx1">Bodo (Latin) </option>
+          <option value="brx2">Bodo (Devanagiri) </option>
+        </select>
+        <br><br>
+        <label for="outputLang">Output Language:</label>
+        <select id="outputLang">
+          <option value="brx2">Bodo (Devanagiri)</option>
+          <option value="brx1">Bodo (Latin)</option>
+          <option value="en">English</option>
+        </select>
+        <br><br>
+        <label for="voiceModel">Voice Model:</label>
+        <select id="voiceModel">
+          <option value="swrang">Swrang</option>
+          <option value="swrji">Swrji</option>
+        </select>
+        <br><br>
+        <label for="model">Models (Coming Soon):</label>
+        <select id="model">
+          <option value="1">Default</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Floating Info Button and Sidebar -->
+<!-- Floating Info Button and Sidebar -->
+<div id="floatingInfo">
+  <button id="infoToggle" aria-label="Info">
+    <!-- SVG Info Icon (Material Design) -->
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="11" stroke="#2563eb" stroke-width="2" fill="#e7f0fd"/>
+      <rect x="11" y="10" width="2" height="7" rx="1" fill="#2563eb"/>
+      <rect x="11" y="7" width="2" height="2" rx="1" fill="#2563eb"/>
+    </svg>
+  </button>
+  <div id="infoSidebar">
+    <h3>About  इयुन AI</h3>
+    <p>
+    Iyun AI is designed to assist with multilingual conversations, providing translations, transliterations and intelligent responses in both Bodo and English. It can also playback the audio of responses in Bodo. The name <strong>"इयुन" or “Iyun”</strong> means “Future” in the Bodo language, reflecting our vision for the cultural future of the Bodo language and its rich heritage. By leveraging advanced natural language processing, Iyun AI tries to deliver accurate, context-aware answers. As part of our commitment to linguistic empowerment, data collected through Iyun AI will be used to train independent, community-driven large language models or to fine-tune state-of-the-art models, ensuring that Bodo language and culture continue to thrive in the digital age.
+    
+    <br><br>
+    <em>Iyun AI may not generate correct responses all the time and is still in the development phase.</em>
+  </p>
+  <br><br>
+  <p>
+  Click <a href="https://iitg.ac.in/stud/innocent" target="_blank" rel="noopener">here</a> to know more about the developer.
+  </p>
   </div>
+</div>
+
+
+
+
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+  
+
+  <header>
+    <img src="ai-icon.png" alt="Iyun AI" class="ai-logo" />
+    इयुन AI
+  </header>
+
+  <div class="chat-container" id="chat">
+    <div class="message bot">
+      <!-- हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन? -->
+      <span class="bot-text">हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन?</span>
+      <button class="play-audio-btn" title="Play response">
+        <!-- Speaker SVG Icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 9v6h4l5 5V4L7 9H3z" fill="#2563eb"/>
+          <path d="M16.5 12c0-1.77-1-3.29-2.5-4.03v8.06A4.978 4.978 0 0 0 16.5 12z" fill="#2563eb"/>
+          <path d="M14 3.23v2.06c3.39.49 6 3.39 6 6.71s-2.61 6.22-6 6.71v2.06c4.01-.52 7-3.87 7-8.77s-2.99-8.25-7-8.77z" fill="#2563eb"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="user-input" placeholder="Ask anything..." />
+    <button>Send</button>
+  </div>
+
+  
+
+  <!-- Send Message Script -->
+  <script>
+  const input = document.getElementById("user-input");
+  const chat = document.getElementById("chat");
+  const sendBtn = document.querySelector(".input-area button");
+
+  sendBtn.addEventListener("click", sendMessage);
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function appendMessage(text, sender, isPlaceholder = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', sender);
+    if (isPlaceholder) messageDiv.classList.add('placeholder');
+
+    // If bot message, add play button
+    if (sender === 'bot') {
+      messageDiv.innerHTML = `<span class="bot-text"></span>
+        <button class="play-audio-btn" title="Play response">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M3 9v6h4l5 5V4L7 9H3z" fill="#2563eb"/>
+            <path d="M16.5 12c0-1.77-1-3.29-2.5-4.03v8.06A4.978 4.978 0 0 0 16.5 12z" fill="#2563eb"/>
+            <path d="M14 3.23v2.06c3.39.49 6 3.39 6 6.71s-2.61 6.22-6 6.71v2.06c4.01-.52 7-3.87 7-8.77s-2.99-8.25-7-8.77z" fill="#2563eb"/>
+          </svg>
+        </button>`;
+      messageDiv.querySelector('.bot-text').textContent = text;
+    } else {
+      messageDiv.textContent = text;
+    }
+
+    chat.appendChild(messageDiv);
+    chat.scrollTop = chat.scrollHeight;
+
+    return isPlaceholder ? messageDiv : null;
+  }
+
+  function updateMessage(messageElement, newText) {
+    if (messageElement && messageElement instanceof HTMLElement) {
+      // If bot message, update only the text span
+      const botText = messageElement.querySelector('.bot-text');
+      if (botText) {
+        botText.innerHTML = marked.parse(newText);
+      } else {
+        messageElement.innerHTML = marked.parse(newText);
+      }
+      messageElement.classList.remove('placeholder');
+    }
+  }
+
+  async function sendMessage() {
+      const userInput = input.value.trim();
+      if (!userInput) return;
+    
+      const inputSelectedLang = document.getElementById('inputLang').value;
+      const outputSelectedLang = document.getElementById('outputLang').value;
+    
+      appendMessage(userInput, 'user');
+      const placeholderId = appendMessage("Processing...", 'bot', true);
+    
+      try {
+        const response = await fetch("https://iyunai.azurewebsites.net/chat", {
+          // const response = await fetch("http://127.0.0.1:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userInput, inputLanguage: inputSelectedLang, outputLanguage:  outputSelectedLang}),
+        });
+    
+        const data = await response.json();
+        const reply = data.reply || "Sorry, no reply received.";
+    
+        // try {
+        //   const translationResponse = await fetch("https://iyun-ai-translate.onrender.com/translate", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({ text: reply, to: "brx" })  // You may update "brx" based on selectedLang too
+        //   });
+    
+        //   const translationData = await translationResponse.json();
+        //   const translatedText = translationData.translation || reply;
+        //   updateMessage(placeholderId, translatedText);
+        // } catch (translationError) {
+        //   console.error("Translation failed:", translationError);
+        //   updateMessage(placeholderId, reply);
+        // }
+        
+        updateMessage(placeholderId, reply);
+    
+      } catch (error) {
+        updateMessage(placeholderId, "Sorry, something went wrong.");
+      }
+    
+      input.value = '';
+    }
+
+    // ...existing code...
+
+// Event delegation for play-audio-btn
+// document.getElementById('chat').addEventListener('click', async function(event) {
+//   if (event.target.closest('.play-audio-btn')) {
+//     console.log('Play audio button clicked');
+//     const btn = event.target.closest('.play-audio-btn');
+//     const botTextElem = btn.parentElement.querySelector('.bot-text');
+//     if (!botTextElem) return;
+//     const text = botTextElem.textContent || botTextElem.innerText;
+//     // You may want to detect the language from outputLang
+//     const lang = document.getElementById('outputLang').value;
+
+//     btn.disabled = true;
+//     btn.title = "Loading audio...";
+
+//     try {
+//       // const response = await fetch('https://iyunai.azurewebsites.net/tts', {
+//         const response = await fetch('http://127.0.0.1:5000/tts', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text, lang })
+//       });
+//       if (!response.ok) throw new Error('Audio fetch failed');
+//       const audioBlob = await response.blob();
+//       const audioUrl = URL.createObjectURL(audioBlob);
+//       const audio = new Audio(audioUrl);
+//       audio.play();
+//       audio.onended = () => {
+//         URL.revokeObjectURL(audioUrl);
+//         btn.disabled = false;
+//         btn.title = "Play response";
+//       };
+//     } catch (e) {
+//       btn.title = "Audio unavailable";
+//       btn.disabled = false;
+//     }
+//   }
+// });
+
+
+
+// ...existing code...
+// document.getElementById('chat').addEventListener('click', async function(event) {
+//   if (event.target.closest('.play-audio-btn')) {
+//     const btn = event.target.closest('.play-audio-btn');
+//     const botTextElem = btn.parentElement.querySelector('.bot-text');
+//     if (!botTextElem) return;
+//     const text = botTextElem.textContent || botTextElem.innerText;
+//     const lang = document.getElementById('outputLang').value;
+
+//     btn.disabled = true;
+//     btn.title = "Loading audio...";
+
+//     try {
+//       const response = await fetch('http://127.0.0.1:5000/tts', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text, lang })
+//       });
+//       if (!response.ok) throw new Error('Audio fetch failed');
+//       const audioBlob = await response.blob();
+//       const audioUrl = URL.createObjectURL(audioBlob);
+//       const audio = new Audio(audioUrl);
+//       audio.play();
+//       audio.onended = () => {
+//         URL.revokeObjectURL(audioUrl);
+//         btn.disabled = false;
+//         btn.title = "Play response";
+//       };
+//     } catch (e) {
+//       btn.title = "Audio unavailable";
+//       btn.disabled = false;
+//     }
+//   }
+// });
+
+// ...existing code...
+// document.getElementById('chat').addEventListener('click', async function(event) {
+//   if (event.target.closest('.play-audio-btn')) {
+//     const btn = event.target.closest('.play-audio-btn');
+//     const botTextElem = btn.parentElement.querySelector('.bot-text');
+//     if (!botTextElem) return;
+//     const text = botTextElem.textContent || botTextElem.innerText;
+//     const lang = document.getElementById('outputLang').value;
+
+//     // Save original button HTML to restore later
+//     const originalBtnHTML = btn.innerHTML;
+//     // Replace button content with a spinner
+//     btn.innerHTML = `
+//       <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
+//         <circle class="path" cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="5"></circle>
+//       </svg>
+//     `;
+//     btn.disabled = true;
+//     btn.title = "Loading audio...";
+
+//     try {
+//       const response = await fetch('http://127.0.0.1:5000/tts', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text, lang })
+//       });
+//       if (!response.ok) throw new Error('Audio fetch failed');
+//       const audioBlob = await response.blob();
+//       const audioUrl = URL.createObjectURL(audioBlob);
+//       const audio = new Audio(audioUrl);
+//       audio.play();
+//       audio.onended = () => {
+//         URL.revokeObjectURL(audioUrl);
+//         btn.innerHTML = originalBtnHTML; // Restore play button
+//         btn.disabled = false;
+//         btn.title = "Play response";
+//       };
+//     } catch (e) {
+//       btn.innerHTML = originalBtnHTML; // Restore play button
+//       btn.title = "Audio unavailable";
+//       btn.disabled = false;
+//     }
+//   }
+// });
+
+
+// ...existing code...
+// let currentAudio = null;
+// let currentAudioBtn = null;
+
+// document.getElementById('chat').addEventListener('click', async function(event) {
+//   if (event.target.closest('.play-audio-btn')) {
+//     const btn = event.target.closest('.play-audio-btn');
+//     const audiolang = document.getElementById('outputLang').value;
+
+//     if (audiolang !== "brx2") {
+//       alert("Voice is supported only for Bodo (Devanagiri) output.");
+//       return;
+//     }
+
+//     // If this button is currently playing, stop playback
+//     if (currentAudio && currentAudioBtn === btn) {
+//       currentAudio.pause();
+//       currentAudio.currentTime = 0;
+//       currentAudio = null;
+//       btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+//       btn.title = "Play response";
+//       currentAudioBtn = null;
+//       return;
+//     }
+
+//     const botTextElem = btn.parentElement.querySelector('.bot-text');
+//     if (!botTextElem) return;
+//     const text = botTextElem.textContent || botTextElem.innerText;
+//     const lang = document.getElementById('outputLang').value;
+//     const voiceModel = document.getElementById('voiceModel').value;
+
+//     // console.log("Sending to /tts:", { text, lang });
+
+//     // Save original button HTML to restore later (only once)
+//     if (!btn.dataset.originalHtml) {
+//       btn.dataset.originalHtml = btn.innerHTML;
+//     }
+
+//     // Show spinner while loading
+//     btn.innerHTML = `
+//       <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
+//         <circle class="path" cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="5"></circle>
+//       </svg>
+//     `;
+//     btn.disabled = true;
+//     btn.title = "Loading audio...";
+
+//     try {
+//       const response = await fetch('http://127.0.0.1:5000/tts', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text, lang, voiceModel })
+//       });
+//       if (!response.ok) throw new Error('Audio fetch failed');
+//       const audioBlob = await response.blob();
+//       const audioUrl = URL.createObjectURL(audioBlob);
+//       const audio = new Audio(audioUrl);
+
+//       // Set global references
+//       currentAudio = audio;
+//       currentAudioBtn = btn;
+
+//       // Show stop icon while playing
+//     // ...inside your play-audio-btn event handler, replace the stop icon SVG with this:
+//     btn.innerHTML = `
+//       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+//         <rect x="6" y="6" width="12" height="12" rx="2" fill="#e53935"/>
+//       </svg>
+//     `;
+//     btn.disabled = false;
+//     btn.title = "Stop audio";
+//     // ...rest of the code...
+//       btn.disabled = false;
+//       btn.title = "Stop audio";
+
+//       audio.play();
+
+//       audio.onended = () => {
+//         URL.revokeObjectURL(audioUrl);
+//         btn.innerHTML = btn.dataset.originalHtml;
+//         btn.title = "Play response";
+//         currentAudio = null;
+//         currentAudioBtn = null;
+//       };
+
+//       audio.onpause = () => {
+//         URL.revokeObjectURL(audioUrl);
+//         btn.innerHTML = btn.dataset.originalHtml;
+//         btn.title = "Play response";
+//         currentAudio = null;
+//         currentAudioBtn = null;
+//       };
+//     } catch (e) {
+//       btn.innerHTML = btn.dataset.originalHtml;
+//       btn.title = "Audio unavailable";
+//       btn.disabled = false;
+//       currentAudio = null;
+//       currentAudioBtn = null;
+//     }
+//   }
+// });
+// ...existing code...
+
+// window.addEventListener('DOMContentLoaded', async function() {
+//   // Set up the first bot message and send to API
+//   const initialBotText = "हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन?";
+//   // Find the first bot message element
+//   const firstBotMsg = document.querySelector('.chat-container .message.bot');
+//   if (firstBotMsg) {
+//     // Set the text in the .bot-text span if using appendMessage, else leave as is
+//     // Optionally, you can update the message with API reply if needed
+//     try {
+//       const inputSelectedLang = document.getElementById('inputLang').value;
+//       const outputSelectedLang = document.getElementById('outputLang').value;
+//       const response = await fetch("http://127.0.0.1:5000/chat", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           message: initialBotText,
+//           inputLanguage: outputSelectedLang, // treat as outputLang for first message
+//           outputLanguage: outputSelectedLang
+//         }),
+//       });
+//       const data = await response.json();
+//       // If you want to update the bot message with the API reply, uncomment below:
+//       // firstBotMsg.querySelector('.bot-text').textContent = data.reply || initialBotText;
+//     } catch (e) {
+//       // Optionally handle error
+//     }
+//   }
+// });
+
+
+let currentAudio = null;
+let currentAudioBtn = null;
+
+document.getElementById('chat').addEventListener('click', async function(event) {
+  if (event.target.closest('.play-audio-btn')) {
+    const btn = event.target.closest('.play-audio-btn');
+    const audiolang = document.getElementById('outputLang').value;
+
+    if (audiolang !== "brx2") {
+      alert("Voice is supported only for Bodo (Devanagiri) output.");
+      return;
+    }
+
+    if (currentAudio && currentAudioBtn === btn) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+      btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+      btn.title = "Play response";
+      currentAudioBtn = null;
+      return;
+    }
+
+    const botTextElem = btn.parentElement.querySelector('.bot-text');
+    if (!botTextElem) return;
+    const text = botTextElem.textContent || botTextElem.innerText;
+    const lang = document.getElementById('outputLang').value;
+    const voiceModel = document.getElementById('voiceModel').value;
+
+    if (!btn.dataset.originalHtml) {
+      btn.dataset.originalHtml = btn.innerHTML;
+    }
+
+    btn.innerHTML = `
+      <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="5"></circle>
+      </svg>
+    `;
+    btn.disabled = true;
+    btn.title = "Loading audio...";
+
+    try {
+      const response = await fetch('https://iyunai.azurewebsites.net/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, lang, voiceModel })
+      });
+
+      if (response.status === 429) {
+        btn.innerHTML = btn.dataset.originalHtml;
+        btn.title = "Quota exceeded";
+        btn.disabled = false;
+        alert("Voice quota exceeded!");
+        return;
+      }
+
+      if (!response.ok) throw new Error('Audio fetch failed');
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+
+      currentAudio = audio;
+      currentAudioBtn = btn;
+
+      btn.innerHTML = `
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="6" y="6" width="12" height="12" rx="2" fill="#e53935"/>
+        </svg>
+      `;
+      btn.disabled = false;
+      btn.title = "Stop audio";
+
+      audio.play();
+
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        btn.innerHTML = btn.dataset.originalHtml;
+        btn.title = "Play response";
+        currentAudio = null;
+        currentAudioBtn = null;
+      };
+
+      audio.onpause = () => {
+        URL.revokeObjectURL(audioUrl);
+        btn.innerHTML = btn.dataset.originalHtml;
+        btn.title = "Play response";
+        currentAudio = null;
+        currentAudioBtn = null;
+      };
+    } catch (e) {
+      btn.innerHTML = btn.dataset.originalHtml;
+      btn.title = "Audio unavailable";
+      btn.disabled = false;
+      currentAudio = null;
+      currentAudioBtn = null;
+    }
+  }
+});
+
+// ...existing code...
+
+
+// ...existing code...
+
+</script>
+
+
+  <!-- Particle.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <!-- Particle Config -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#90e0ef" },
+        shape: {
+          type: "circle",
+          stroke: { width: 0, color: "#000000" },
+          polygon: { nb_sides: 5 },
+        },
+        opacity: {
+          value: 0.5,
+          random: false,
+          anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#90e0ef",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 4,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+          attract: { enable: false, rotateX: 600, rotateY: 1200 }
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          grab: { distance: 400, line_linked: { opacity: 1 } },
+          bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+          repulse: { distance: 100, duration: 0.4 },
+          push: { particles_nb: 4 },
+          remove: { particles_nb: 2 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+  
+  
+  <!-- info sidebar -->
+  <script>
+  const menuToggle = document.getElementById('menuToggle');
+  const menuSidebar = document.getElementById('menuSidebar');
+
+  menuToggle.addEventListener('click', function() {
+    menuSidebar.classList.toggle('open');
+  });
+
+  // Optional: Close sidebar if user clicks outside
+  document.addEventListener('click', function(event) {
+    if (
+      !menuSidebar.contains(event.target) &&
+      !menuToggle.contains(event.target)
+    ) {
+      menuSidebar.classList.remove('open');
+    }
+  });
+  
+  const infoToggle = document.getElementById('infoToggle');
+const infoSidebar = document.getElementById('infoSidebar');
+
+infoToggle.addEventListener('click', function() {
+  infoSidebar.classList.toggle('open');
+});
+
+// Optional: Close info sidebar if user clicks outside
+document.addEventListener('click', function(event) {
+  if (
+    !infoSidebar.contains(event.target) &&
+    !infoToggle.contains(event.target)
+  ) {
+    infoSidebar.classList.remove('open');
+  }
+});
+
+    </script>
+    
+    <script>
+  // Map language codes to placeholder text
+  const placeholders = {
+    en: "Ask anything...",
+    brx1: "Maba swng...",
+    brx2: "माबा सों ..."
+  };
+
+  // Get references to the select and input elements
+  const inputLang = document.getElementById('inputLang');
+  const userInput = document.getElementById('user-input');
+
+  // Update placeholder on language change
+  inputLang.addEventListener('change', function() {
+    const selectedLang = inputLang.value;
+    userInput.placeholder = placeholders[selectedLang] || "Ask anything...";
+  });
+
+  // Optional: Set initial placeholder based on default selected value
+  userInput.placeholder = placeholders[inputLang.value] || "Ask anything...";
+</script>
+
+  <script>
+  // Automatically open floating menu on first load/refresh
+  window.addEventListener('DOMContentLoaded', function() {
+    // Simulate a click to open the menu sidebar
+    menuToggle.click();
+  });
+</script>
+
+
 </body>
 </html>
