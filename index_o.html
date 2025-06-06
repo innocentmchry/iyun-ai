@@ -511,6 +511,7 @@
   async function sendMessage() {
       const userInput = input.value.trim();
       if (!userInput) return;
+      input.value = '';
     
       const inputSelectedLang = document.getElementById('inputLang').value;
       const outputSelectedLang = document.getElementById('outputLang').value;
