@@ -22,7 +22,9 @@ document.getElementById('clearChatBtn').addEventListener('click', function() {
   if (saved) {
     chatHistory = JSON.parse(saved);
     chatHistory.forEach(msg => appendMessage(msg.text, msg.sender, false, false)); // Don't save again!
+    setTimeout(() => {
     chat.scrollTop = chat.scrollHeight;
+    }, 100);
   }
 });
 
