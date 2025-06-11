@@ -17,14 +17,21 @@ document.getElementById('clearChatBtn').addEventListener('click', function() {
   
   let chatHistory = [];
 
-  window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function() {
   const saved = localStorage.getItem('iyunai_chat');
   if (saved) {
     chatHistory = JSON.parse(saved);
-    chatHistory.forEach(msg => appendMessage(msg.text, msg.sender, false, false)); // Don't save again!
+    chatHistory.forEach(msg => appendMessage(msg.text, msg.sender, false, false));
+
     setTimeout(() => {
-    chat.scrollTop = chat.scrollHeight;
-    }, 100);
+      chat.scrollTop = chat.scrollHeight;
+    }, 0);
+  } else {
+    // Show welcome message only if no chat history
+    appendMessage("हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन?", "bot");
+    setTimeout(() => {
+      chat.scrollTop = chat.scrollHeight;
+    }, 0);
   }
 });
 
@@ -49,7 +56,15 @@ function appendMessage(text, sender, isPlaceholder = false, saveToHistory = true
 }
 
   chat.appendChild(messageDiv);
-  chat.scrollTop = chat.scrollHeight;
+//   chat.scrollTop = chat.scrollHeight;
+
+    // requestAnimationFrame(() => {
+    //     chat.scrollTop = chat.scrollHeight;
+    // });
+
+    requestAnimationFrame(() => {
+    chat.scrollTop = chat.scrollHeight;
+    });
 
   // Save to chatHistory and localStorage (except for placeholders and when restoring)
   if (!isPlaceholder && saveToHistory) {
@@ -79,6 +94,14 @@ function appendMessage(text, sender, isPlaceholder = false, saveToHistory = true
         messageElement.innerHTML = marked.parse(cleanedText);
       }
       messageElement.classList.remove('placeholder');
+
+      requestAnimationFrame(() => {
+      chat.scrollTop = chat.scrollHeight;
+      // Second scroll after DOM paints (for long messages)
+      setTimeout(() => {
+            chat.scrollTop = chat.scrollHeight;
+        }, 50);
+        });
     }
   }
 

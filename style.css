@@ -1,3 +1,7 @@
+html, body {
+  height: 100%;
+}
+
 :root {
       --bg-color: #fdfdfd;
       --header-bg: #ffffff;
@@ -62,7 +66,9 @@
     }
 
 .chat-container {
-  flex: 1;
+  /* flex: 1; */
+  flex: 1 1 0%;
+  min-height: 0;
   padding: 5rem 1rem 4.5rem 1rem; /* Top padding adjusted for fixed header */
   overflow-y: auto;
   display: flex;
@@ -70,6 +76,8 @@
   gap: 1rem;
   z-index: 1;
 }
+
+
 
 
 
