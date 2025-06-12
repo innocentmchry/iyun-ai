@@ -476,6 +476,7 @@ document.addEventListener('click', function(event) {
 
   // Map language codes to placeholder text
   const placeholders = {
+    auto: "Ask anything, Maba swng, माबा सों...",
     en: "Ask anything...",
     brx1: "Maba swng...",
     brx2: "माबा सों ..."
