@@ -180,15 +180,25 @@ document.getElementById('chat').addEventListener('click', async function(event) 
     const audiolang = document.getElementById('outputLang').value;
 
     // Always stop and clean up previous audio before proceeding
-    if (currentAudio) {
+    // if (currentAudio) {
+    //   currentAudio.pause();
+    //   currentAudio.currentTime = 0;
+    //   currentAudio = null;
+    //   if (currentAudioBtn) {
+    //     currentAudioBtn.innerHTML = currentAudioBtn.dataset.originalHtml || currentAudioBtn.innerHTML;
+    //     currentAudioBtn.title = "Play response";
+    //     currentAudioBtn = null;
+    //   }
+    // }
+
+    if (currentAudio && currentAudioBtn === btn) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
-      if (currentAudioBtn) {
-        currentAudioBtn.innerHTML = currentAudioBtn.dataset.originalHtml || currentAudioBtn.innerHTML;
-        currentAudioBtn.title = "Play response";
-        currentAudioBtn = null;
-      }
+      btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+      btn.title = "Play response";
+      currentAudioBtn = null;
+      return;
     }
 
     if (audiolang == "brx2" || audiolang == "as") {
