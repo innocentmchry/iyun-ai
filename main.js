@@ -49,56 +49,56 @@ window.addEventListener('beforeinstallprompt', (e) => {
   if (installBtn) installBtn.style.display = 'flex';
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   const installBtn = document.getElementById('installBtn');
-//   if (installBtn) {
-//     installBtn.addEventListener('click', async function () {
-//       if (deferredPrompt) {
-//         deferredPrompt.prompt();
-//         deferredPrompt = null;
-//         installBtn.style.display = 'none';
-//       }
-//     });
-//   }
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
     installBtn.addEventListener('click', async function () {
-      if ('serviceWorker' in navigator) {
-        const manifestFile =
-          window.location.pathname.includes('iyunaimultilingual.html')
-            ? 'manifest-multilingual.json'
-            : 'manifest.json';
-
-        try {
-          const link = document.createElement('link');
-          link.rel = 'manifest';
-          link.href = manifestFile;
-          document.head.appendChild(link);
-
-          const deferredPrompt = window.deferredPrompt;
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-              console.log('App installed successfully!');
-            } else {
-              console.log('App installation declined.');
-            }
-          } else {
-            alert('Install prompt is not available.');
-          }
-        } catch (error) {
-          console.error('Error during installation:', error);
-        }
-      } else {
-        alert('Service workers are not supported in this browser.');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
       }
     });
   }
 });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const installBtn = document.getElementById('installBtn');
+//   if (installBtn) {
+//     installBtn.addEventListener('click', async function () {
+//       if ('serviceWorker' in navigator) {
+//         const manifestFile =
+//           window.location.pathname.includes('iyunaimultilingual.html')
+//             ? 'manifest-multilingual.json'
+//             : 'manifest.json';
+
+//         try {
+//           const link = document.createElement('link');
+//           link.rel = 'manifest';
+//           link.href = manifestFile;
+//           document.head.appendChild(link);
+
+//           const deferredPrompt = window.deferredPrompt;
+//           if (deferredPrompt) {
+//             deferredPrompt.prompt();
+//             const { outcome } = await deferredPrompt.userChoice;
+//             if (outcome === 'accepted') {
+//               console.log('App installed successfully!');
+//             } else {
+//               console.log('App installation declined.');
+//             }
+//           } else {
+//             alert('Install prompt is not available.');
+//           }
+//         } catch (error) {
+//           console.error('Error during installation:', error);
+//         }
+//       } else {
+//         alert('Service workers are not supported in this browser.');
+//       }
+//     });
+//   }
+// });
 
 //////////////////////
 
