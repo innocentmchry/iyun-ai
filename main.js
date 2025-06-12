@@ -26,13 +26,37 @@
 // window.addEventListener('appinstalled', () => {
 //   installBtn.style.display = 'none';
 // });
+//////////////////////
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const installBtn = document.getElementById('installBtn');
+//   if (installBtn) {
+//     installBtn.addEventListener('click', function () {
+//       if (window.AddToHomeScreenInstance) {
+//         window.AddToHomeScreenInstance.show('en');
+//       }
+//     });
+//   }
+// });
+///////////////////////////
+
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) installBtn.style.display = 'flex';
+});
 
 document.addEventListener('DOMContentLoaded', function () {
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
-    installBtn.addEventListener('click', function () {
-      if (window.AddToHomeScreenInstance) {
-        window.AddToHomeScreenInstance.show('en');
+    installBtn.addEventListener('click', async function () {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
       }
     });
   }
