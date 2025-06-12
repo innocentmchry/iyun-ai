@@ -1,30 +1,41 @@
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('service-worker.js');
-  });
-}
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', function() {
+//     navigator.serviceWorker.register('service-worker.js');
+//   });
+// }
 
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
+// let deferredPrompt;
+// const installBtn = document.getElementById('installBtn');
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'flex';
-});
+// window.addEventListener('beforeinstallprompt', (e) => {
+//   e.preventDefault();
+//   deferredPrompt = e;
+//   installBtn.style.display = 'flex';
+// });
 
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    installBtn.style.display = 'none';
+// installBtn.addEventListener('click', async () => {
+//   if (!deferredPrompt) return;
+//   deferredPrompt.prompt();
+//   const { outcome } = await deferredPrompt.userChoice;
+//   if (outcome === 'accepted') {
+//     installBtn.style.display = 'none';
+//   }
+//   deferredPrompt = null;
+// });
+
+// window.addEventListener('appinstalled', () => {
+//   installBtn.style.display = 'none';
+// });
+
+document.addEventListener('DOMContentLoaded', function () {
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) {
+    installBtn.addEventListener('click', function () {
+      if (window.AddToHomeScreenInstance) {
+        window.AddToHomeScreenInstance.show('en');
+      }
+    });
   }
-  deferredPrompt = null;
-});
-
-window.addEventListener('appinstalled', () => {
-  installBtn.style.display = 'none';
 });
 
 //////////////////////
