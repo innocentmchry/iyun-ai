@@ -1,50 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Under Maintenance</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <style>
-    body {
-      background: #f8fafc;
-      color: #22223b;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-    .container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-      padding: 2.5rem 2rem;
-      text-align: center;
-      max-width: 400px;
-    }
-    h1 {
-      color: #2563eb;
-      margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-    .icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #2563eb;
-    }
-  </style>
-  
+  <title>Iyun AI</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="icon">🚧</div>
-    <h1>We'll be back soon!</h1>
-    <p>The Iyun AI app is currently under maintenance.</p>
-    <p>Please check back later.</p>
+    
+    <!-- Floating Menu Button and Sidebar -->
+    <div id="floatingMenu">
+      <button id="menuToggle">&#9776;</button>
+      <div id="menuSidebar">
+        <h3>Configurations</h3>
+        <label for="inputLang">Input Language:</label>
+        <select id="inputLang">
+          <option value="auto">Auto Detect</option>
+          <option value="en">English</option>
+          <option value="brx1">Bodo (Latin) </option>
+          <option value="brx2">Bodo (Devanagiri) </option>
+        </select>
+        <br><br>
+        <label for="outputLang">Output Language:</label>
+        <select id="outputLang">
+          <option value="brx2">Bodo (Devanagiri)</option>
+          <option value="brx1">Bodo (Latin)</option>
+          <option value="en">English</option>
+        </select>
+        <br><br>
+        <label for="voiceModel">Voice Model:</label>
+        <select id="voiceModel">
+          <option value="swrang">Swrang</option>
+          <option value="swrji">Swrji</option>
+        </select>
+        <br><br>
+        <label for="model">Models (Coming Soon):</label>
+        <select id="model">
+          <option value="1">Default</option>
+        </select>
+         <!-- Add the clear chat button here -->
+          <br><br>
+        <!-- New IyunAI Multilingual button -->
+        <button id="multilingualBtn" style="background:#2563eb;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;margin-bottom:10px;">
+          IyunAI Multilingual
+        </button>
+        <button id="clearChatBtn" style="background:#e53935;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;margin-top:10px;">
+          Clear Chat History
+        </button>
+      </div>
+    </div>
+    
+    <!-- Floating Info Button and Sidebar -->
+<!-- Floating Info Button and Sidebar -->
+<div id="floatingInfo">
+  <button id="infoToggle" aria-label="Info">
+    <!-- SVG Info Icon (Material Design) -->
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="11" stroke="#2563eb" stroke-width="2" fill="#e7f0fd"/>
+      <rect x="11" y="10" width="2" height="7" rx="1" fill="#2563eb"/>
+      <rect x="11" y="7" width="2" height="2" rx="1" fill="#2563eb"/>
+    </svg>
+  </button>
+  <div id="infoSidebar">
+    <h3>About  इयुन AI</h3>
+    <p>
+    Iyun AI is designed to assist with multilingual conversations, providing translations, transliterations and intelligent responses in both Bodo and English. It can also playback the audio of responses in Bodo. The name <strong>"इयुन" or “Iyun”</strong> means “Future” in the Bodo language, reflecting our vision for the cultural future of the Bodo language and its rich heritage. By leveraging advanced natural language processing, Iyun AI tries to deliver accurate, context-aware answers. As part of our commitment to linguistic empowerment, data collected through Iyun AI will be used to train independent, community-driven large language models or to fine-tune state-of-the-art models, ensuring that Bodo language and culture continue to thrive in the digital age.
+    
+    <br><br>
+    <em>Iyun AI may not generate correct responses all the time and is still in the development phase.</em>
+  </p>
+  <br><br>
+  <p>
+  Click <a href="https://iitg.ac.in/stud/innocent" target="_blank" rel="noopener">here</a> to know more about the developer.
+  </p>
   </div>
+</div>
+
+
+
+
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+  
+
+  <header>
+    <img src="ai-icon.png" alt="Iyun AI" class="ai-logo" />
+    इयुन AI
+  </header>
+
+
+  <div class="chat-container" id="chat"></div>
+
+  <div class="input-area">
+    <input type="text" id="user-input" placeholder="Ask anything..." />
+    <button>Send</button>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="main.js"></script>
+
+
+  <script>
+    // Redirect to iyunaimultilingual.html on button click
+    document.addEventListener('DOMContentLoaded', function() {
+      var multilingualBtn = document.getElementById('multilingualBtn');
+      if (multilingualBtn) {
+        multilingualBtn.onclick = function() {
+          window.location.href = 'iyunaimultilingual.html';
+        };
+      }
+    });
+  </script>
 </body>
 </html>
