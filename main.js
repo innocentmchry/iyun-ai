@@ -475,12 +475,31 @@ document.addEventListener('click', function(event) {
 });
 
   // Map language codes to placeholder text 
-  const placeholders = {
-    auto: "Ask anything... Maba swng... माबा सों...",
+  // const placeholders = {
+  //   auto: "Ask anything... Maba swng... माबा सों...",
+  //   en: "Ask anything...",
+  //   brx1: "Maba swng...",
+  //   brx2: "माबा सों ..."
+  // };
+
+  const placeholdersIndex = {
+  auto: "Ask anything... / Maba swng... / माबा सों...",
+  en: "Ask anything...",
+  brx1: "Maba swng...",
+  brx2: "माबा सों ..."
+  };
+
+  const placeholdersMultilingual = {
+    auto: "Ask anything... / কিবা এটা সুধক / माबा सों ...",
     en: "Ask anything...",
     brx1: "Maba swng...",
-    brx2: "माबा सों ..."
+    brx2: "माबा सों ...",
+    as: "কিবা এটা সুধক ..."
   };
+
+  const isMultilingual = window.location.pathname.includes('iyunaimultilingual.html');
+  const placeholders = isMultilingual ? placeholdersMultilingual : placeholdersIndex;
+
 
   // Get references to the select and input elements
   const inputLang = document.getElementById('inputLang');
@@ -492,8 +511,8 @@ document.addEventListener('click', function(event) {
     userInput.placeholder = placeholders[selectedLang] || "Ask anything...";
   });
 
-  // Optional: Set initial placeholder based on default selected value
-  userInput.placeholder = placeholders[inputLang.value] || "Ask anything.";
+  // Set initial placeholder based on default selected value
+userInput.placeholder = placeholders[inputLang.value] || "Ask anything...";
 
 //     // Automatically open floating menu on first load/refresh
 //   window.addEventListener('DOMContentLoaded', function() {
