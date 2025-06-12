@@ -483,14 +483,14 @@ document.addEventListener('click', function(event) {
   // };
 
   const placeholdersIndex = {
-  auto: "Ask anything... / Maba swng... / माबा सों...",
+  auto: "Ask anything / Maba swng / माबा सों",
   en: "Ask anything...",
   brx1: "Maba swng...",
   brx2: "माबा सों ..."
   };
 
   const placeholdersMultilingual = {
-    auto: "Ask anything... / কিবা এটা সুধক / माबा सों ...",
+    auto: "Ask anything / কিবা এটা সুধক / माबा सों ",
     en: "Ask anything...",
     brx1: "Maba swng...",
     brx2: "माबा सों ...",
