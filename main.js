@@ -1,6 +1,7 @@
 document.getElementById('clearChatBtn').addEventListener('click', function() {
   if (confirm("Are you sure you want to clear the chat history?")) {
-    localStorage.removeItem('iyunai_chat');
+    // localStorage.removeItem('iyunai_chat');
+    localStorage.removeItem(CHAT_KEY);
     location.reload();
   }
 });  
@@ -17,8 +18,18 @@ document.getElementById('clearChatBtn').addEventListener('click', function() {
   
   let chatHistory = [];
 
+  let CHAT_KEY, INTRO_MSG;
+
+  if (window.location.pathname.includes('iyunaimultilingual.html')) {
+    CHAT_KEY = "iyunai_multilingual_chat";
+    INTRO_MSG = "নমস্কাৰ! মই আইয়ুন AI.। মই আজি আপোনাৰ কেনেকৈ সহায় কৰিব পাৰিম?";
+  } else {
+    CHAT_KEY = "iyunai_chat";
+    INTRO_MSG = "हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन?";
+  }
+
 window.addEventListener('DOMContentLoaded', function() {
-  const saved = localStorage.getItem('iyunai_chat');
+  const saved = localStorage.getItem(CHAT_KEY);
   if (saved) {
     chatHistory = JSON.parse(saved);
     chatHistory.forEach(msg => appendMessage(msg.text, msg.sender, false, false));
@@ -27,8 +38,8 @@ window.addEventListener('DOMContentLoaded', function() {
       chat.scrollTop = chat.scrollHeight;
     }, 0);
   } else {
-    // Show welcome message only if no chat history
-    appendMessage("हाय! आं इयुन AI. दिनै आं नोंखौ माबोरै हेफाजाब होनो हागोन?", "bot");
+
+    appendMessage(INTRO_MSG, "bot");
     setTimeout(() => {
       chat.scrollTop = chat.scrollHeight;
     }, 0);
@@ -69,7 +80,20 @@ function appendMessage(text, sender, isPlaceholder = false, saveToHistory = true
   // Save to chatHistory and localStorage (except for placeholders and when restoring)
   if (!isPlaceholder && saveToHistory) {
     chatHistory.push({ text, sender });
-    localStorage.setItem('iyunai_chat', JSON.stringify(chatHistory));
+    try {
+      // localStorage.setItem('iyunai_chat', JSON.stringify(chatHistory));
+      localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError' || e.code === 22) {
+        alert("Local storage is full. Chat history will be cleared.");
+        localStorage.removeItem(CHAT_KEY);
+        chatHistory = [];
+        chat.innerHTML = '';
+        appendMessage(INTRO_MSG, "bot");
+      } else {
+        throw e;
+      }
+    }
   }
 
   return isPlaceholder ? messageDiv : null;
@@ -105,53 +129,45 @@ function appendMessage(text, sender, isPlaceholder = false, saveToHistory = true
     }
   }
 
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  // console.log("Is local environment:", isLocal);
+  const API_BASE = isLocal ? "http://127.0.0.1:5000" : "https://iyunai.azurewebsites.net";
+  // console.log("API Base URL:", API_BASE);
+
   async function sendMessage() {
       const userInput = input.value.trim();
       if (!userInput) return;
       input.value = '';
-    
+
       const inputSelectedLang = document.getElementById('inputLang').value;
       const outputSelectedLang = document.getElementById('outputLang').value;
-    
+
       appendMessage(userInput, 'user');
       const placeholderId = appendMessage("Processing...", 'bot', true);
-    
+      const page = window.location.pathname.includes('iyunaimultilingual.html') ? "multilingual" : "default";
+
       try {
-        const response = await fetch("https://iyunai.azurewebsites.net/chat", {
-        //   const response = await fetch("http://127.0.0.1:5000/chat", {
+        const response = await fetch(`${API_BASE}/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userInput, inputLanguage: inputSelectedLang, outputLanguage:  outputSelectedLang}),
+          body: JSON.stringify({ message: userInput, inputLanguage: inputSelectedLang, outputLanguage:  outputSelectedLang, page: page}),
         });
-    
+
         const data = await response.json();
         const reply = data.reply || "Sorry, no reply received.";
-    
-        // try {
-        //   const translationResponse = await fetch("https://iyun-ai-translate.onrender.com/translate", {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({ text: reply, to: "brx" })  // You may update "brx" based on selectedLang too
-        //   });
-    
-        //   const translationData = await translationResponse.json();
-        //   const translatedText = translationData.translation || reply;
-        //   updateMessage(placeholderId, translatedText);
-        // } catch (translationError) {
-        //   console.error("Translation failed:", translationError);
-        //   updateMessage(placeholderId, reply);
-        // }
-        
+
         updateMessage(placeholderId, reply);
         chatHistory.push({ text: reply, sender: 'bot' });
-        localStorage.setItem('iyunai_chat', JSON.stringify(chatHistory));
-    
+        // Use CHAT_KEY instead of hardcoded 'iyunai_chat'
+        localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory));
+
       } catch (error) {
         updateMessage(placeholderId, "Sorry, something went wrong.");
         chatHistory.push({ text: reply, sender: 'bot' });
-        localStorage.setItem('iyunai_chat', JSON.stringify(chatHistory));
+        // Use CHAT_KEY instead of hardcoded 'iyunai_chat'
+        localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory));
       }
-    
+
       input.value = '';
     }
 
@@ -163,93 +179,127 @@ document.getElementById('chat').addEventListener('click', async function(event) 
     const btn = event.target.closest('.play-audio-btn');
     const audiolang = document.getElementById('outputLang').value;
 
-    if (audiolang !== "brx2") {
-      alert("Voice is supported only for Bodo (Devanagiri) output.");
-      return;
-    }
-
-    if (currentAudio && currentAudioBtn === btn) {
+    // Always stop and clean up previous audio before proceeding
+    if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
-      btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
-      btn.title = "Play response";
-      currentAudioBtn = null;
-      return;
+      if (currentAudioBtn) {
+        currentAudioBtn.innerHTML = currentAudioBtn.dataset.originalHtml || currentAudioBtn.innerHTML;
+        currentAudioBtn.title = "Play response";
+        currentAudioBtn = null;
+      }
     }
 
-    const botTextElem = btn.parentElement.querySelector('.bot-text');
-    if (!botTextElem) return;
-    const text = botTextElem.textContent || botTextElem.innerText;
-    const lang = document.getElementById('outputLang').value;
-    const voiceModel = document.getElementById('voiceModel').value;
+    if (audiolang == "brx2" || audiolang == "as") {
+      const botTextElem = btn.parentElement.querySelector('.bot-text');
+      if (!botTextElem) return;
+      const text = botTextElem.textContent || botTextElem.innerText;
+      const lang = document.getElementById('outputLang').value;
+      const voiceModel = document.getElementById('voiceModel').value;
 
-    if (!btn.dataset.originalHtml) {
-      btn.dataset.originalHtml = btn.innerHTML;
-    }
-
-    btn.innerHTML = `
-      <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
-        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="5"></circle>
-      </svg>
-    `;
-    btn.disabled = true;
-    btn.title = "Loading audio...";
-
-    try {
-      const response = await fetch('https://iyunai.azurewebsites.net/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, lang, voiceModel })
-      });
-
-      if (response.status === 429) {
-        btn.innerHTML = btn.dataset.originalHtml;
-        btn.title = "Quota exceeded";
-        btn.disabled = false;
-        alert("Voice quota exceeded!");
-        return;
+      if (!btn.dataset.originalHtml) {
+        btn.dataset.originalHtml = btn.innerHTML;
       }
 
-      if (!response.ok) throw new Error('Audio fetch failed');
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-
-      currentAudio = audio;
-      currentAudioBtn = btn;
-
       btn.innerHTML = `
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <rect x="6" y="6" width="12" height="12" rx="2" fill="#e53935"/>
+        <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
+          <circle class="path" cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="5"></circle>
         </svg>
       `;
-      btn.disabled = false;
-      btn.title = "Stop audio";
+      btn.disabled = true;
+      btn.title = "Loading audio...";
 
-      audio.play();
+      try {
+        const response = await fetch(`${API_BASE}/tts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, lang, voiceModel })
+        });
 
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
+        // Check if response is audio
+        const contentType = response.headers.get('Content-Type');
+        if (response.status === 429) {
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = "Quota exceeded";
+          btn.disabled = false;
+          alert("Voice quota exceeded!");
+          return;
+        }
+        if (!response.ok || !contentType || !contentType.startsWith('audio')) {
+          // Try to parse error message
+          let errorMsg = "Audio unavailable";
+          try {
+            const errJson = await response.json();
+            if (errJson && errJson.error) errorMsg = errJson.error;
+          } catch {}
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = errorMsg;
+          btn.disabled = false;
+          alert(errorMsg);
+          return;
+        }
+
+        const audioBlob = await response.blob();
+        if (!audioBlob || audioBlob.size === 0) {
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = "Audio unavailable";
+          btn.disabled = false;
+          alert("Audio unavailable");
+          return;
+        }
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        currentAudio = audio;
+        currentAudioBtn = btn;
+
+        btn.innerHTML = `
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="6" y="6" width="12" height="12" rx="2" fill="#e53935"/>
+          </svg>
+        `;
+        btn.disabled = false;
+        btn.title = "Stop audio";
+
+        try {
+          await audio.play();
+        } catch (err) {
+          URL.revokeObjectURL(audioUrl);
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = "Play response";
+          currentAudio = null;
+          currentAudioBtn = null;
+          alert("Audio playback failed.");
+          return;
+        }
+
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = "Play response";
+          currentAudio = null;
+          currentAudioBtn = null;
+        };
+
+        audio.onpause = () => {
+          URL.revokeObjectURL(audioUrl);
+          btn.innerHTML = btn.dataset.originalHtml;
+          btn.title = "Play response";
+          currentAudio = null;
+          currentAudioBtn = null;
+        };
+      } catch (e) {
         btn.innerHTML = btn.dataset.originalHtml;
-        btn.title = "Play response";
+        btn.title = "Audio unavailable";
+        btn.disabled = false;
         currentAudio = null;
         currentAudioBtn = null;
-      };
-
-      audio.onpause = () => {
-        URL.revokeObjectURL(audioUrl);
-        btn.innerHTML = btn.dataset.originalHtml;
-        btn.title = "Play response";
-        currentAudio = null;
-        currentAudioBtn = null;
-      };
-    } catch (e) {
-      btn.innerHTML = btn.dataset.originalHtml;
-      btn.title = "Audio unavailable";
-      btn.disabled = false;
-      currentAudio = null;
-      currentAudioBtn = null;
+        alert("Audio unavailable");
+      }
+    } else {
+      alert("Voice is supported only for Bodo (Devanagiri) output or Assamese");
+      return;
     }
   }
 });

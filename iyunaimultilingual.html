@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IyunAI Multilingual</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div id="floatingMenu">
+      <button id="menuToggle">&#9776;</button>
+      <div id="menuSidebar">
+        <h3>Configurations</h3>
+        <label for="inputLang">Input Language:</label>
+        <select id="inputLang">
+          <option value="auto">Auto Detect</option>
+          <option value="as">Assamese</option>
+          <option value="brx2">Bodo (Devanagiri)</option>
+          <option value="brx1">Bodo (Latin)</option>
+        </select>
+        <br><br>
+        <label for="outputLang">Output Language:</label>
+        <select id="outputLang">
+          <option value="as">Assamese</option>
+          <option value="brx2">Bodo (Devanagiri)</option>
+          <option value="brx1">Bodo (Latin)</option>
+          <option value="en">English</option>
+
+        </select>
+        <br><br>
+        <label for="voiceModel">Voice Model:</label>
+        <select id="voiceModel">
+          <option value="swrji">Swrji</option>
+          <option value="swrang">Swrang</option>
+        </select>
+        <br><br>
+        <label for="model">Models (Coming Soon):</label>
+        <select id="model">
+          <option value="1">Default</option>
+        </select>
+        <br><br>
+        <button id="backToBodoBtn" style="background:#2563eb;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;margin-bottom:10px;">
+          IyunAI Bodo/English
+        </button>
+        <button id="clearChatBtn" style="background:#e53935;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;margin-top:10px;">
+          Clear Chat History
+        </button>
+      </div>
+    </div>
+    <div id="floatingInfo">
+      <button id="infoToggle" aria-label="Info">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="11" stroke="#2563eb" stroke-width="2" fill="#e7f0fd"/>
+          <rect x="11" y="10" width="2" height="7" rx="1" fill="#2563eb"/>
+          <rect x="11" y="7" width="2" height="2" rx="1" fill="#2563eb"/>
+        </svg>
+      </button>
+      <div id="infoSidebar">
+        <h3>About IyunAI Multilingual</h3>
+        <p>
+          IyunAI Assam Multilingual expands Iyun AI's capabilities to support Bodo and Assamese, in addition to English. It provides translations, transliterations, and intelligent responses, with a focus on Bodo and Assamese language empowerment.
+        </p>
+        <br><br>
+        <em>This is an experimental multilingual version. Features and accuracy may vary.</em>
+        <br><br>
+        <p>
+          Click <a href="https://iitg.ac.in/stud/innocent" target="_blank" rel="noopener">here</a> to know more about the developer.
+        </p>
+      </div>
+    </div>
+    <div id="particles-js"></div>
+    <header>
+      <img src="ai-icon.png" alt="Iyun AI" class="ai-logo" />
+      Iyun AI
+      <span style="display:inline-block; margin-left:10px; vertical-align:middle; font-size:0.45em; color:#2563eb; opacity:0.7; line-height:1.1;">
+        Assam<br>Multilingual
+      </span>
+    </header>
+    <div class="chat-container" id="chat"></div>
+
+    </div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Ask anything..." />
+      <button>Send</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="main.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var backBtn = document.getElementById('backToBodoBtn');
+    if (backBtn) {
+      backBtn.onclick = function() {
+        window.location.href = 'index.html';
+      };
+    }
+  });
+  </script>
+</body>
+</html>
