@@ -52,6 +52,16 @@
         <button id="clearChatBtn" style="background:#e53935;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;margin-top:10px;">
           Clear Chat History
         </button>
+        <br><br>
+        <button id="installBtn" style="background:#22c55e;color:#fff;width:100%;padding:10px 0;border:none;border-radius:8px;cursor:pointer;display:none;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <!-- SVG Download Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <path fill="#fff" d="M12 16a1 1 0 0 1-1-1V5a1 1 0 1 1 2 0v10a1 1 0 0 1-1 1Z"/>
+          <path fill="#fff" d="M7 13a1 1 0 0 1 1.707-.707l2.293 2.293 2.293-2.293A1 1 0 1 1 15.707 14.707l-3 3a1 1 0 0 1-1.414 0l-3-3A1 1 0 0 1 7 13Z"/>
+          <path fill="#fff" d="M5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"/>
+        </svg>
+        Install Iyun AI
+      </button>
       </div>
     </div>
     
@@ -117,5 +127,28 @@
       }
     });
   </script>
+
+  <script>
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Show your custom install button
+    document.getElementById('installBtn').style.display = 'block';
+  });
+
+  document.getElementById('installBtn').addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      // Optionally, hide the button after install
+      document.getElementById('installBtn').style.display = 'none';
+      deferredPrompt = null;
+    }
+  });
+</script>
 </body>
 </html>
