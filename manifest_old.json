@@ -1,0 +1,17 @@
+{
+  "short_name": "IyunAI",
+  "name": "IyunAI: the bodo llm (add to homescreen)",
+  "display": "standalone",
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "icons": [
+      {
+          "src": "ai-icon-download.png",
+          "sizes": "any",
+          "type": "image/png",
+          "purpose": "any"
+      }
+  ]
+}
+
+  

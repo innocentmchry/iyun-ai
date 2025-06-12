@@ -1,7 +1,7 @@
 {
-  "name": "Iyun AI",
-  "short_name": "IyunAI",
-  "start_url": "index.html",
+  "name": "Iyun AI Multilingual",
+  "short_name": "IyunAI Multi",
+  "start_url": "iyunaimultilingual.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
